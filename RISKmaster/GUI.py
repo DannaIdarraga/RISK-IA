@@ -20,8 +20,15 @@ DHE_IMG='tete-de-mort.png'
 POLICE_NAME='freesansbold.ttf'
 POLICE_SIZE=16
 DICE_SIZE=25
-f_w=1280
-f_h=800
+#Ajuste tamaño pantalla
+
+import ctypes
+
+user32 = ctypes.windll.user32
+user32.SetProcessDPIAware()
+ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+f_w=ancho
+f_h=alto
 
 class ColorMap():
 	def __init__(self):
@@ -38,8 +45,9 @@ class ColorMap():
 		self.dark_green=(0,170,0)
 		self.dark_red=(170,0,0)
 		self.dark_blue=(0,0,170)
+		self.fondo=(227,208,150)
 
-#a mettre dans une classe
+#Poner en una clase
 def text_objects(text, font,color=(0,0,0)):
 	textSurface = font.render(text, True, color)
 	return textSurface, textSurface.get_rect()
@@ -48,16 +56,16 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 	mouse = pygame.mouse.get_pos()
 	click = pygame.mouse.get_pressed()
 	if x+w > mouse[0] > x and y+h > mouse[1] > y:
-		pygame.draw.rect(fenetre, ac,(x,y,w,h))
+		pygame.draw.rect(ventana, ac,(x,y,w,h))
 		if click[0] == 1 and action != None:
 			Win.fonctions.append(action)
 	else:
-		pygame.draw.rect(fenetre, ic,(x,y,w,h))
+		pygame.draw.rect(ventana, ic,(x,y,w,h))
 
 	smallText = pygame.font.Font(POLICE_NAME,POLICE_SIZE)
 	textSurf, textRect = text_objects(msg, smallText)
 	textRect.center = ( (x+(w/2)), (y+(h/2)) )
-	fenetre.blit(textSurf, textRect)
+	ventana.blit(textSurf, textRect)
 
 def color_surface(surface,color):
 	for x in range(0,surface.get_width()):
@@ -138,35 +146,35 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 	col=[100,400,700,1000]
 	row=pos[1]
 	#partie joueur
-	textSurf, textRect = text_objects('Tour : '+str(turns.num), smallText)
+	textSurf, textRect = text_objects('Turno: '+str(turns.num), smallText)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Joueur : ',smallText)
+	textSurf, textRect = text_objects('Jugador: ',smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 	textSurf, textRect = text_objects(turns.players[turns.player_turn-1].name, smallText,turns.players[turns.player_turn-1].color)
 	textRect.topleft = (pos[0]+70,pos[1])#pas propre
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Phase : '+turns.list_phase[turns.phase], smallText)
+	textSurf, textRect = text_objects('Fase: '+turns.list_phase[turns.phase], smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldats par tours : '+str(turns.players[turns.player_turn-1].sbyturn), smallText)
+	textSurf, textRect = text_objects('Soldados por turnos: '+str(turns.players[turns.player_turn-1].sbyturn), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldats a deployer : '+str(turns.players[turns.player_turn-1].nb_troupes), smallText)
+	textSurf, textRect = text_objects('Soldados a desplegar: '+str(turns.players[turns.player_turn-1].nb_troupes), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldats selectionnes : '+str(nb_units), smallText)
+	textSurf, textRect = text_objects('Soldados seleccionados: '+str(nb_units), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 
-	#partie objectifs
-	textSurf, textRect = text_objects('Objectif(s) ', smallText)
+	#OBJETIVOS
+	textSurf, textRect = text_objects('Objetivos', smallText)
 	pos=(col[1],row)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
@@ -179,7 +187,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 		textRect.topleft = pos
 		t_hud.append([textSurf, textRect])
 		try:
-			textSurf, textRect = text_objects('Statut : '+str(turns.players[turns.player_turn-1].obj.get_state()), smallText)
+			textSurf, textRect = text_objects('Status: '+str(turns.players[turns.player_turn-1].obj.get_state()), smallText)
 		except AttributeError as e:
 			print (e.args)
 		pos=(col[1],row+2*marge)
@@ -187,7 +195,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 		t_hud.append([textSurf, textRect])
 
 	#partie cartes
-	textSurf, textRect = text_objects('Cartes ', smallText)
+	textSurf, textRect = text_objects('Tarjetas', smallText)
 	pos=(col[1],row+3*marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
@@ -199,7 +207,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 
 	#partie bonus des continents
 	pos=(col[3],row)
-	textSurf, textRect = text_objects('Bonus Continents', smallText)
+	textSurf, textRect = text_objects('Continentes Bonus', smallText)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 	for idx,c in enumerate(turns.map.continents):
@@ -238,8 +246,8 @@ class SpritePays():
 		self.bounds=surface.get_bounding_rect()
 
 class CurrentWindow():
-	def __init__(self,fenetre,turns):
-		self.fenetre=fenetre
+	def __init__(self,ventana,turns):
+		self.ventana=ventana
 		self.fonctions=[]	#liste de l'ensemble des fonctions a exécuter
 		self.surfaces=[] #liste de l'ensemble des surfaces à afficher
 		self.dices=[] #liste de l'ensemble des surfaces dices
@@ -289,12 +297,15 @@ class CurrentWindow():
 
 	def start_game(self):
 		self.surfaces=[]
-		#fond bleue
-		# background = pygame.Surface(fenetre.get_size())
-		# background = background.convert()
-		# background.fill(blue)
-		#fond personnalisé
-		background=pygame.image.load(PATH_BCK+BCK_IMG).convert()
+		
+		#Sin el fondo horrible
+		background = pygame.Surface(ventana.get_size())
+		background = background.convert()
+		background.fill(Colors.fondo)
+
+		#Con el fondo horrible
+		#background=pygame.image.load(PATH_BCK+BCK_IMG).convert()
+	
 		coeff=f_w/background.get_width() #adapte l'image selon la largeur
 		w=int(coeff*background.get_width())
 		h=int(coeff*background.get_height())
@@ -405,20 +416,20 @@ class CurrentWindow():
 						print(e.args)
 
 			for surface in self.surfaces:
-				self.fenetre.blit(surface[0],surface[1])
+				self.ventana.blit(surface[0],surface[1])
 			for dice in self.dices:
-				self.fenetre.blit(dice[0],dice[1])
+				self.ventana.blit(dice[0],dice[1])
 			#for sprite in sprites_pays:
-			#	self.fenetre.blit(sprite.map_pays,(0,0))
-			self.fenetre.blit(merged_pays,(0,0))
+			#	self.ventana.blit(sprite.map_pays,(0,0))
+			self.ventana.blit(merged_pays,(0,0))
 			for tmp in self.tmp:
-				self.fenetre.blit(tmp,(0,0))
+				self.ventana.blit(tmp,(0,0))
 			for texte in self.textes:
-				self.fenetre.blit(texte[0],texte[1])
+				self.ventana.blit(texte[0],texte[1])
 			for t in self.t_hud:
-				self.fenetre.blit(t[0],t[1])
+				self.ventana.blit(t[0],t[1])
 			for final in self.final_layer:
-				self.fenetre.blit(final[0],final[1])
+				self.ventana.blit(final[0],final[1])
 			if self.fonctions != []:
 				for f in self.fonctions:
 					f()				#fonctions d'affichage
@@ -426,7 +437,7 @@ class CurrentWindow():
 			#Ecran de victoire lorsqu'un joueur gagne
 			if self.turns.players[self.turns.player_turn-1].obj.get_state()==True: #pas propre
 				self.final_layer=[]
-				win_screen = pygame.Surface(self.fenetre.get_size())
+				win_screen = pygame.Surface(self.ventana.get_size())
 				win_screen = win_screen.convert()
 				win_screen.fill(colormap.black)
 				win_screen.set_alpha(180)
@@ -436,7 +447,7 @@ class CurrentWindow():
 				#ecran d'aide
 				if help_menu:
 					self.final_layer=[]
-					win_screen = pygame.Surface(self.fenetre.get_size())
+					win_screen = pygame.Surface(self.ventana.get_size())
 					win_screen = win_screen.convert()
 					win_screen.fill(colormap.black)
 					win_screen.set_alpha(180)
@@ -447,7 +458,7 @@ class CurrentWindow():
 
 			#pygame.display.flip()
 			mouse = pygame.mouse.get_pos()
-			#print(self.fenetre.get_at((mouse[0], mouse[1])))
+			#print(self.ventana.get_at((mouse[0], mouse[1])))
 			#boucle de survole des pays
 			#for idx,sprite in enumerate(sprites_pays):
 				#if sprite.bounds.x<mouse[0]<sprite.bounds.x+sprite.bounds.width and sprite.bounds.y<mouse[1]<sprite.bounds.y+sprite.bounds.height: 
@@ -469,10 +480,10 @@ class CurrentWindow():
 					# if sprite.id != sprite_select:
 					# 	sprite_bis=SpritePays(sprite.map_pays.copy(),"00.png") #pas propre
 					# 	color_surface(sprite_bis,(1,1,1),150)
-					# 	self.fenetre.blit(sprite_bis.map_pays,(0,0))
+					# 	self.ventana.blit(sprite_bis.map_pays,(0,0))
 					# 	pygame.display.flip()
 					if id_pays_tmp != sprite_select:
-						self.fenetre.blit(sp_msq.map_pays,(0,0))
+						self.ventana.blit(sp_msq.map_pays,(0,0))
 						pygame.display.update(sp_msq.map_pays.get_rect())
 						#pygame.display.update(sp_msq.bounds)
 					click=pygame.mouse.get_pressed()
@@ -572,7 +583,7 @@ class CurrentWindow():
 def menu(Win):
 	#useless?
 	barre=pygame.image.load(PATH_IMG+BAR_IMG).convert()
-	r1=Win.fenetre.blit(barre,(0,0))
+	r1=Win.ventana.blit(barre,(0,0))
 	Win.surfaces.extend([[barre,r1]])
 
 #affichage des dés(résultats) +têtes de morts pour les pertes
@@ -581,12 +592,12 @@ def roll_dices(Win,pertes,number,x,y):
 	for idx,d in enumerate(number):
 		de=pygame.image.load(PATH_DCE+str(d)+".png").convert_alpha()
 		resize_de=pygame.transform.scale(de,(DICE_SIZE,DICE_SIZE)) #resize des dices
-		L.append([resize_de,Win.fenetre.blit(resize_de,(idx*DICE_SIZE*1.1+x,y))])
+		L.append([resize_de,Win.ventana.blit(resize_de,(idx*DICE_SIZE*1.1+x,y))])
 
 	for idx_p in range(0,pertes):
 		deadhead=pygame.image.load(PATH_DCE+DHE_IMG).convert_alpha()
 		resize_dh=pygame.transform.scale(deadhead,(DICE_SIZE,DICE_SIZE)) #resize des deadhead
-		L.append([resize_dh,Win.fenetre.blit(resize_dh,(x-(idx_p+1)*DICE_SIZE*1.1,y))])
+		L.append([resize_dh,Win.ventana.blit(resize_dh,(x-(idx_p+1)*DICE_SIZE*1.1,y))])
 	Win.dices.extend(L) 
 
 def menu_but(Win):
@@ -616,18 +627,18 @@ if __name__ == '__main__':
 	# T.players[3].color=Colors.white
 	# T.players[4].color=Colors.yellow
 	# T.players[5].color=Colors.cian
-	T.players[0].name='nico'
-	T.players[1].name='nono'
-	T.players[2].name='jojo'
-	# T.players[3].name='wis'
+	T.players[0].name='danna'
+	T.players[1].name='fabio'
+	T.players[2].name='diana'
+	#T.players[3].name='santi'
 	# T.players[4].name='gogor'
 	# T.players[5].name='pilou'
 	# T.players[3].color=grey
 
 	pygame.init()
 	clock = pygame.time.Clock()
-	fenetre = pygame.display.set_mode((f_w, f_h))
-	Win=CurrentWindow(fenetre,T)
+	ventana = pygame.display.set_mode((f_w, f_h))
+	Win=CurrentWindow(ventana,T)
 	Win.game.nb_joueurs=3
 	Win.game.joueurs=['nico','nono','jojo']
 	#menu_but(Win)							#affiche ini ? useless ?
