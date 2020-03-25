@@ -99,9 +99,9 @@ def makeform(root, fields):
       ent = Entry(root)
       lab.grid(row=idx, column=0)
       ent.grid(row=idx, column=1)
-      # liste des couleurs
+      # lista de colores
       lst1 = PLAYERS_COLORS
-      #Couleurs deja selectionnees
+      #colores seleccionados
 
       var1 = StringVar()
       Drop = OptionMenu(root,var1,*lst1)
@@ -122,13 +122,13 @@ def suivant():
    for k in range(0,nb_joueurs):
       fields.append("Jugador"+str(k+1))
    ents = makeform(root, fields)
-   root.bind('<Return>', (lambda event, e=ents: fetch(e)))  # je comprends rien a ce que je fais
+   root.bind('<Return>', (lambda event, e=ents: fetch(e)))
    b1.grid_forget()
    Entry1.grid_forget()
    Lbl1.grid_forget()
    b2 = Button(root, text='Jugador',command=lambda e=ents: launch_game(e)) 
-   b2.grid(row=20, column=0)#pas prore
-   b3.grid(row=20, column=1)#pas propre
+   b2.grid(row=20, column=0)
+   b3.grid(row=20, column=1)
    
 if __name__ == '__main__':
    root = Tk()
