@@ -146,7 +146,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 	textSurf, textRect = text_objects(turns.players[turns.player_turn-1].name, smallText,turns.players[turns.player_turn-1].color)
-	textRect.topleft = (pos[0]+70,pos[1])#pas propre
+	textRect.topleft = (pos[0]+70,pos[1])#no limpio
 	t_hud.append([textSurf, textRect])
 	textSurf, textRect = text_objects('Fase : '+turns.list_phase[turns.phase], smallText)
 	pos=(pos[0],pos[1]+marge)
