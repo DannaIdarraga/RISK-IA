@@ -616,9 +616,9 @@ if __name__ == '__main__':
 	# T.players[3].color=Colors.white
 	# T.players[4].color=Colors.yellow
 	# T.players[5].color=Colors.cian
-	T.players[0].name='nico'
-	T.players[1].name='nono'
-	T.players[2].name='jojo'
+	T.players[0].name='santi'
+	T.players[1].name='danna'
+	T.players[2].name='diana'
 	# T.players[3].name='wis'
 	# T.players[4].name='gogor'
 	# T.players[5].name='pilou'
