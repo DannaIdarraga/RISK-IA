@@ -36,5 +36,5 @@ TODO:
 
 Questions:
 <ul>
-<li>dead players can win anyway ?</li>
+<li>Los jugadores muertos pueden ganar de todos modos?</li>
 </ul>
