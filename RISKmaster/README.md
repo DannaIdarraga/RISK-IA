@@ -20,13 +20,6 @@ Known bug:
 <ul>
 <li>text too long</li>
 <li>no path 2->6afrique du sud</li>
-<li><del>Click too fast</del></li>
-<li><del>no path 2->6afrique du sud; italie/maroc</del></li>
-<li><del>pas de combat avec un attaquant</del></li>
-<li><del>bug map, black color</del></li>
-<li><del>no path mexic->argentine</del></li>
-<li><del>turn 1 troops bug</del></li>
-<li><del>attack with 1 man land</del></li>
 </ul>
 
 TODO:
@@ -58,7 +51,6 @@ TODO:
 <li><del>make a victory screen</del></li>
 <li><del>help menu</del></li>
 <del><li>give goals to player</li></del>
-<li><del>function next player</del></li>
 </ul>
 
 Questions:
