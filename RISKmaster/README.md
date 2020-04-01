@@ -1,4 +1,4 @@
-# Risk
+# RISK
 Juego de estrategia RISK desarrollado en Python
 
 Comandos:
