@@ -1,8 +1,6 @@
-#!/usr/bin/env python3.4
-# -*- coding: utf-8 -*-
 
 from tkinter import *
-#Imports de porc
+
 import Risk
 from Risk import *
 import GUI
@@ -11,8 +9,8 @@ from GUI import *
 fields = []
 PLAYERS_COLORS=['red','green','blue','yellow','purple','cian']
 MAX_NB_PLAYERS=6
-MIN_NB_PLAYERS =3
-CLOCK_TICK=60 #refresh rate
+MIN_NB_PLAYERS =2
+CLOCK_TICK=60
 
 def fetch(entries):
    for entry in entries:
@@ -36,14 +34,14 @@ def correspondance_colors(nameofcolor,colormap):
       return colormap.cian
 
 def launch_game(entries):
-   #on verifie que deux joueurs n'ont pas la meme couleur, pas de nom vide
+   #comprobamos que dos jugadores no tienen el mismo color, no hay un nombre vacío
    try:
       players_names=[]
       players_colors=[]
       for entry in entries:
          players_names.append(entry[1].get())
          if entry[1].get()=='':
-            raise ValueError('Vous devez choisir un nom de joeur')
+            raise ValueError('Debes escoger un nombre de jugador')
          players_colors.append(entry[2].get())
       seen = set()
       uniq = []
@@ -52,7 +50,7 @@ def launch_game(entries):
            uniq.append(c)
            seen.add(c)
       if not len(uniq)==len(players_names):
-         raise ValueError('Vous devez choisir une couleur différente pour chaque joeur:')
+         raise ValueError('Debes escoger un color diferente para cada jugador:')
    except ValueError as e:
          print (e.args)
    else:
@@ -101,9 +99,9 @@ def makeform(root, fields):
       ent = Entry(root)
       lab.grid(row=idx, column=0)
       ent.grid(row=idx, column=1)
-      # liste des couleurs
+      # lista de colores
       lst1 = PLAYERS_COLORS
-      #Couleurs deja selectionnees
+      #colores seleccionados
 
       var1 = StringVar()
       Drop = OptionMenu(root,var1,*lst1)
@@ -122,31 +120,32 @@ def suivant():
    else:
       print(nb_joueurs)
    for k in range(0,nb_joueurs):
-      fields.append("Joueur"+str(k+1))
+      fields.append("Jugador"+str(k+1))
    ents = makeform(root, fields)
-   root.bind('<Return>', (lambda event, e=ents: fetch(e)))  # je comprends rien a ce que je fais
+   root.bind('<Return>', (lambda event, e=ents: fetch(e)))
    b1.grid_forget()
    Entry1.grid_forget()
    Lbl1.grid_forget()
-   b2 = Button(root, text='Jouer',command=lambda e=ents: launch_game(e)) 
-   b2.grid(row=20, column=0)#pas prore
-   b3.grid(row=20, column=1)#pas propre
+   b2 = Button(root, text='Jugador',command=lambda e=ents: launch_game(e)) 
+   b2.grid(row=20, column=0)
+   b3.grid(row=20, column=1)
    
 if __name__ == '__main__':
    root = Tk()
    root.title("Risk")
 
-   Lbl1 = Label(root, text="Nombre de joueurs:")
+   Lbl1 = Label(root, text="Nombre de jugadores:")
    Lbl1.grid(row=0, column=0,columnspan=2)
    Entry1 = Entry(root, bd =1)
    Entry1.grid(row=1, column=0,columnspan=2)
 
-   b1 = Button(root, text='Suivant',command=suivant)
+   b1 = Button(root, text='Siguiente',command=suivant)
    b1.grid(row=2, column=0)
     
-   b3 = Button(root, text='Quit', command=root.quit)
+   b3 = Button(root, text='Quitar', command=root.quit)
    b3.grid(row=2, column=1)
    root.mainloop()
 
 
+ 
  

@@ -20,15 +20,8 @@ DHE_IMG='tete-de-mort.png'
 POLICE_NAME='freesansbold.ttf'
 POLICE_SIZE=16
 DICE_SIZE=25
-#Ajuste tamaño pantalla
-
-import ctypes
-
-user32 = ctypes.windll.user32
-user32.SetProcessDPIAware()
-ancho, alto = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-f_w=ancho
-f_h=alto
+f_w=1280
+f_h=800
 
 class ColorMap():
 	def __init__(self):
@@ -45,9 +38,8 @@ class ColorMap():
 		self.dark_green=(0,170,0)
 		self.dark_red=(170,0,0)
 		self.dark_blue=(0,0,170)
-		self.fondo=(227,208,150)
 
-#Poner en una clase
+#a mettre dans une classe
 def text_objects(text, font,color=(0,0,0)):
 	textSurface = font.render(text, True, color)
 	return textSurface, textSurface.get_rect()
@@ -56,16 +48,16 @@ def button(msg,x,y,w,h,ic,ac,action=None):
 	mouse = pygame.mouse.get_pos()
 	click = pygame.mouse.get_pressed()
 	if x+w > mouse[0] > x and y+h > mouse[1] > y:
-		pygame.draw.rect(ventana, ac,(x,y,w,h))
+		pygame.draw.rect(fenetre, ac,(x,y,w,h))
 		if click[0] == 1 and action != None:
 			Win.fonctions.append(action)
 	else:
-		pygame.draw.rect(ventana, ic,(x,y,w,h))
+		pygame.draw.rect(fenetre, ic,(x,y,w,h))
 
 	smallText = pygame.font.Font(POLICE_NAME,POLICE_SIZE)
 	textSurf, textRect = text_objects(msg, smallText)
 	textRect.center = ( (x+(w/2)), (y+(h/2)) )
-	ventana.blit(textSurf, textRect)
+	fenetre.blit(textSurf, textRect)
 
 def color_surface(surface,color):
 	for x in range(0,surface.get_width()):
@@ -98,11 +90,11 @@ def add_text(layer,message,pos,font,color=(0,0,0)):
 	textRect.topleft = pos
 	layer.append([textSurf, textRect])
 
-def display_troupes(textes,sprites,Map):
+def display_tropas(textes,sprites,Map):
 	smallText = pygame.font.Font(POLICE_NAME,POLICE_SIZE)
 	for sprite in sprites:
 		pays=Map.pays[sprite.id-1]
-		textSurf, textRect = text_objects(str(pays.nb_troupes), smallText)
+		textSurf, textRect = text_objects(str(pays.nb_tropas), smallText)
 		textRect.center = sprite.bounds.center
 		textes.append([textSurf, textRect])
 
@@ -146,35 +138,35 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 	col=[100,400,700,1000]
 	row=pos[1]
 	#partie joueur
-	textSurf, textRect = text_objects('Turno: '+str(turns.num), smallText)
+	textSurf, textRect = text_objects('Turno : '+str(turns.num), smallText)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Jugador: ',smallText)
+	textSurf, textRect = text_objects('Jugador : ',smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 	textSurf, textRect = text_objects(turns.players[turns.player_turn-1].name, smallText,turns.players[turns.player_turn-1].color)
 	textRect.topleft = (pos[0]+70,pos[1])#no limpio
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Fase: '+turns.list_phase[turns.phase], smallText)
+	textSurf, textRect = text_objects('Fase : '+turns.list_phase[turns.phase], smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldados por turnos: '+str(turns.players[turns.player_turn-1].sbyturn), smallText)
+	textSurf, textRect = text_objects('Soldados por turnos : '+str(turns.players[turns.player_turn-1].sbyturn), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldados a desplegar: '+str(turns.players[turns.player_turn-1].nb_troupes), smallText)
+	textSurf, textRect = text_objects('Soldados a desplegar : '+str(turns.players[turns.player_turn-1].nb_tropas), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
-	textSurf, textRect = text_objects('Soldados seleccionados: '+str(nb_units), smallText)
+	textSurf, textRect = text_objects('Soldados seleccionados : '+str(nb_units), smallText)
 	pos=(pos[0],pos[1]+marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 
-	#OBJETIVOS
-	textSurf, textRect = text_objects('Objetivos', smallText)
+	#partie objectifs
+	textSurf, textRect = text_objects('Objetivos ', smallText)
 	pos=(col[1],row)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
@@ -187,7 +179,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 		textRect.topleft = pos
 		t_hud.append([textSurf, textRect])
 		try:
-			textSurf, textRect = text_objects('Status: '+str(turns.players[turns.player_turn-1].obj.get_state()), smallText)
+			textSurf, textRect = text_objects('Estado : '+str(turns.players[turns.player_turn-1].obj.get_state()), smallText)
 		except AttributeError as e:
 			print (e.args)
 		pos=(col[1],row+2*marge)
@@ -195,7 +187,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 		t_hud.append([textSurf, textRect])
 
 	#partie cartes
-	textSurf, textRect = text_objects('Tarjetas', smallText)
+	textSurf, textRect = text_objects('Cartas ', smallText)
 	pos=(col[1],row+3*marge)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
@@ -207,7 +199,7 @@ def display_hud(nb_units,t_hud,turns,pos,hide):
 
 	#partie bonus des continents
 	pos=(col[3],row)
-	textSurf, textRect = text_objects('Continentes Bonus', smallText)
+	textSurf, textRect = text_objects('Bonus Continentes', smallText)
 	textRect.topleft = pos
 	t_hud.append([textSurf, textRect])
 	for idx,c in enumerate(turns.map.continents):
@@ -234,7 +226,7 @@ def restore_game(obj_lst):
 
 class GamePara():
 	def __init__(self):
-		self.nb_joueurs=0
+		self.nujugadores=0
 		self.tour=0
 		self.joueurs=[]
 
@@ -246,8 +238,8 @@ class SpritePays():
 		self.bounds=surface.get_bounding_rect()
 
 class CurrentWindow():
-	def __init__(self,ventana,turns):
-		self.ventana=ventana
+	def __init__(self,fenetre,turns):
+		self.fenetre=fenetre
 		self.fonctions=[]	#liste de l'ensemble des fonctions a exécuter
 		self.surfaces=[] #liste de l'ensemble des surfaces à afficher
 		self.dices=[] #liste de l'ensemble des surfaces dices
@@ -255,7 +247,7 @@ class CurrentWindow():
 		self.turns=turns
 		self.players=turns.players
 		self.map=turns.map
-		self.textes=[]#liste des textes de troupes pour les fusionner aprés les surfaces
+		self.textes=[]#liste des textes de tropas pour les fusionner aprés les surfaces
 		self.tmp=[]#liste des sprites temporaires
 		self.t_hud=[]#liste des textes HUD
 		self.final_layer=[]#derniere couche d'affichage, utilisé pour le winning screen et le menu d'aide
@@ -265,7 +257,7 @@ class CurrentWindow():
 	@property
 	def nb_units(self):
 		if self.turns.phase==0:#regles du getter pendant la phase de deploiment
-			return min(self._nb_units,self.players[self.turns.player_turn-1].nb_troupes)#le joueur ne peut pas selectionner plus de troupes qu'il n'en possede 
+			return min(self._nb_units,self.players[self.turns.player_turn-1].nb_tropas)#le joueur ne peut pas selectionner plus de tropas qu'il n'en possede 
 		else:
 			return self._nb_units
 
@@ -274,17 +266,17 @@ class CurrentWindow():
 		if self.turns.phase==0:#regles du setter pendant la phase de deploiment
 			if value<1:
 				self._nb_units = 1
-				raise ValueError('Too few troops',value)
-			elif value>self.players[self.turns.player_turn-1].nb_troupes:
-				self._nb_units = self.players[self.turns.player_turn-1].nb_troupes
-				raise ValueError('Too much troops',value)
+				raise ValueError('Muy pocas tropas',value)
+			elif value>self.players[self.turns.player_turn-1].nb_tropas:
+				self._nb_units = self.players[self.turns.player_turn-1].nb_tropas
+				raise ValueError('Muchas tropas',value)
 		else:#regles du setter pendant les autres phases
 			if value<0:
 				self._nb_units = 0
-				raise ValueError('Too few troops',value)
-			elif value>self.pays_select.nb_troupes-1:
-				self._nb_units = self.pays_select.nb_troupes-1#on ne peut attaquer/deplacer que avec n-1 troupes
-				raise ValueError('Too much troops',value)
+				raise ValueError('Muy pocas tropas',value)
+			elif value>self.pays_select.nb_tropas-1:
+				self._nb_units = self.pays_select.nb_tropas-1#on ne peut attaquer/deplacer que avec n-1 tropas
+				raise ValueError('Muchas tropas',value)
 		self._nb_units = value
 
 	def color_players(self,sprites):
@@ -297,15 +289,12 @@ class CurrentWindow():
 
 	def start_game(self):
 		self.surfaces=[]
-		
-		#Sin el fondo horrible
-		background = pygame.Surface(ventana.get_size())
-		background = background.convert()
-		background.fill(Colors.fondo)
-
-		#Con el fondo horrible
-		#background=pygame.image.load(PATH_BCK+BCK_IMG).convert()
-	
+		#fond bleue
+		# background = pygame.Surface(fenetre.get_size())
+		# background = background.convert()
+		# background.fill(blue)
+		#fond personnalisé
+		background=pygame.image.load(PATH_BCK+BCK_IMG).convert()
 		coeff=f_w/background.get_width() #adapte l'image selon la largeur
 		w=int(coeff*background.get_width())
 		h=int(coeff*background.get_height())
@@ -357,8 +346,8 @@ class CurrentWindow():
 			else:
 				merged_pays.blit(spr.map_pays, (0, 0))
 
-		#affichage des troupes
-		display_troupes(self.textes,sprites_pays,self.map)
+		#affichage des tropas
+		display_tropas(self.textes,sprites_pays,self.map)
 
 		while afficher:
 			for event in pygame.event.get():
@@ -411,25 +400,25 @@ class CurrentWindow():
 							if self.nb_units>0:
 								self.nb_units-=1
 					except AttributeError as e:
-						print('You should select a country first')
+						print('Debes seleccionar un Pais')
 					except ValueError as e:
 						print(e.args)
 
 			for surface in self.surfaces:
-				self.ventana.blit(surface[0],surface[1])
+				self.fenetre.blit(surface[0],surface[1])
 			for dice in self.dices:
-				self.ventana.blit(dice[0],dice[1])
+				self.fenetre.blit(dice[0],dice[1])
 			#for sprite in sprites_pays:
-			#	self.ventana.blit(sprite.map_pays,(0,0))
-			self.ventana.blit(merged_pays,(0,0))
+			#	self.fenetre.blit(sprite.map_pays,(0,0))
+			self.fenetre.blit(merged_pays,(0,0))
 			for tmp in self.tmp:
-				self.ventana.blit(tmp,(0,0))
+				self.fenetre.blit(tmp,(0,0))
 			for texte in self.textes:
-				self.ventana.blit(texte[0],texte[1])
+				self.fenetre.blit(texte[0],texte[1])
 			for t in self.t_hud:
-				self.ventana.blit(t[0],t[1])
+				self.fenetre.blit(t[0],t[1])
 			for final in self.final_layer:
-				self.ventana.blit(final[0],final[1])
+				self.fenetre.blit(final[0],final[1])
 			if self.fonctions != []:
 				for f in self.fonctions:
 					f()				#fonctions d'affichage
@@ -437,7 +426,7 @@ class CurrentWindow():
 			#Ecran de victoire lorsqu'un joueur gagne
 			if self.turns.players[self.turns.player_turn-1].obj.get_state()==True: #pas propre
 				self.final_layer=[]
-				win_screen = pygame.Surface(self.ventana.get_size())
+				win_screen = pygame.Surface(self.fenetre.get_size())
 				win_screen = win_screen.convert()
 				win_screen.fill(colormap.black)
 				win_screen.set_alpha(180)
@@ -447,7 +436,7 @@ class CurrentWindow():
 				#ecran d'aide
 				if help_menu:
 					self.final_layer=[]
-					win_screen = pygame.Surface(self.ventana.get_size())
+					win_screen = pygame.Surface(self.fenetre.get_size())
 					win_screen = win_screen.convert()
 					win_screen.fill(colormap.black)
 					win_screen.set_alpha(180)
@@ -458,7 +447,7 @@ class CurrentWindow():
 
 			#pygame.display.flip()
 			mouse = pygame.mouse.get_pos()
-			#print(self.ventana.get_at((mouse[0], mouse[1])))
+			#print(self.fenetre.get_at((mouse[0], mouse[1])))
 			#boucle de survole des pays
 			#for idx,sprite in enumerate(sprites_pays):
 				#if sprite.bounds.x<mouse[0]<sprite.bounds.x+sprite.bounds.width and sprite.bounds.y<mouse[1]<sprite.bounds.y+sprite.bounds.height: 
@@ -480,10 +469,10 @@ class CurrentWindow():
 					# if sprite.id != sprite_select:
 					# 	sprite_bis=SpritePays(sprite.map_pays.copy(),"00.png") #pas propre
 					# 	color_surface(sprite_bis,(1,1,1),150)
-					# 	self.ventana.blit(sprite_bis.map_pays,(0,0))
+					# 	self.fenetre.blit(sprite_bis.map_pays,(0,0))
 					# 	pygame.display.flip()
 					if id_pays_tmp != sprite_select:
-						self.ventana.blit(sp_msq.map_pays,(0,0))
+						self.fenetre.blit(sp_msq.map_pays,(0,0))
 						pygame.display.update(sp_msq.map_pays.get_rect())
 						#pygame.display.update(sp_msq.bounds)
 					click=pygame.mouse.get_pressed()
@@ -493,11 +482,11 @@ class CurrentWindow():
 							if click[0]==1:
 								pays=next((p for p in self.map.pays if p.id == id_pays_tmp), None) 
 								if pays.id_player==self.turns.player_turn:
-									#mise a jout du nombre de troupes
+									#mise a jout du nombre de tropas
 									self.turns.placer(pays,self.nb_units)
 									pygame.time.wait(100) #pas propre
 									# try:
-									# 	self.nb_units=self.players[self.turns.player_turn-1].nb_troupes
+									# 	self.nb_units=self.players[self.turns.player_turn-1].nb_tropas
 									# except ValueError as e:
 									# 	print(e.args)
 								else:
@@ -507,14 +496,14 @@ class CurrentWindow():
 						if click[0]==1 and not select: #selection du pays attaquant 
 							pays1=next((p for p in self.map.pays if p.id == id_pays_tmp), None)
 							self.pays_select=pays1
-							if pays1.id_player==self.turns.player_turn and pays1.nb_troupes>1:
-								self.nb_units=pays1.nb_troupes-1
+							if pays1.id_player==self.turns.player_turn and pays1.nb_tropas>1:
+								self.nb_units=pays1.nb_tropas-1
 								self.tmp.append(sp_msq.map_pays)
 								select=True 
 								sprite_select=id_pays_tmp
 						elif click[0]==1:#selection du pays attaqué
 							pays2=next((p for p in self.map.pays if p.id == id_pays_tmp), None)
-							if atck_winmove and pays2 == pays_atck and pays1.nb_troupes>1:#mouvement gratuit apres attaque reussi
+							if atck_winmove and pays2 == pays_atck and pays1.nb_tropas>1:#mouvement gratuit apres attaque reussi
 								self.turns.deplacer(pays1,pays2,self.nb_units)
 								select=False
 								self.tmp=[]
@@ -544,7 +533,7 @@ class CurrentWindow():
 									merged_pays.blit(sprite.map_pays,(0,0))
 									atck_winmove=True
 									pays_atck=pays2
-									self.nb_units=pays1.nb_troupes-1
+									self.nb_units=pays1.nb_tropas-1
 								else:
 									select=False
 									self.tmp=[]
@@ -552,8 +541,8 @@ class CurrentWindow():
 						if click[0]==1 and not select:
 							pays1=next((p for p in self.map.pays if p.id == id_pays_tmp), None)
 							self.pays_select=pays1
-							if pays1.id_player==self.turns.player_turn and pays1.nb_troupes>1:
-								self.nb_units=pays1.nb_troupes-1
+							if pays1.id_player==self.turns.player_turn and pays1.nb_tropas>1:
+								self.nb_units=pays1.nb_tropas-1
 								self.tmp.append(sp_msq.map_pays)
 								select=True 
 								sprite_select=id_pays_tmp
@@ -566,9 +555,9 @@ class CurrentWindow():
 							if chemin and pays2.id != pays1.id:
 								self.turns.deplacer(pays1,pays2,self.nb_units)
 								self.turns.next()
-					#affichage des troupes
+					#affichage des tropas
 					self.textes=[]
-					display_troupes(self.textes,sprites_pays,self.map)
+					display_tropas(self.textes,sprites_pays,self.map)
 					#break
 			except ValueError as e:
 				pass #pas propre
@@ -583,7 +572,7 @@ class CurrentWindow():
 def menu(Win):
 	#useless?
 	barre=pygame.image.load(PATH_IMG+BAR_IMG).convert()
-	r1=Win.ventana.blit(barre,(0,0))
+	r1=Win.fenetre.blit(barre,(0,0))
 	Win.surfaces.extend([[barre,r1]])
 
 #affichage des dés(résultats) +têtes de morts pour les pertes
@@ -592,12 +581,12 @@ def roll_dices(Win,pertes,number,x,y):
 	for idx,d in enumerate(number):
 		de=pygame.image.load(PATH_DCE+str(d)+".png").convert_alpha()
 		resize_de=pygame.transform.scale(de,(DICE_SIZE,DICE_SIZE)) #resize des dices
-		L.append([resize_de,Win.ventana.blit(resize_de,(idx*DICE_SIZE*1.1+x,y))])
+		L.append([resize_de,Win.fenetre.blit(resize_de,(idx*DICE_SIZE*1.1+x,y))])
 
 	for idx_p in range(0,pertes):
 		deadhead=pygame.image.load(PATH_DCE+DHE_IMG).convert_alpha()
 		resize_dh=pygame.transform.scale(deadhead,(DICE_SIZE,DICE_SIZE)) #resize des deadhead
-		L.append([resize_dh,Win.ventana.blit(resize_dh,(x-(idx_p+1)*DICE_SIZE*1.1,y))])
+		L.append([resize_dh,Win.fenetre.blit(resize_dh,(x-(idx_p+1)*DICE_SIZE*1.1,y))])
 	Win.dices.extend(L) 
 
 def menu_but(Win):
@@ -627,19 +616,19 @@ if __name__ == '__main__':
 	# T.players[3].color=Colors.white
 	# T.players[4].color=Colors.yellow
 	# T.players[5].color=Colors.cian
-	T.players[0].name='danna'
-	T.players[1].name='fabio'
-	T.players[2].name='diana'
-	#T.players[3].name='santi'
+	T.players[0].name='nico'
+	T.players[1].name='nono'
+	T.players[2].name='jojo'
+	# T.players[3].name='wis'
 	# T.players[4].name='gogor'
 	# T.players[5].name='pilou'
 	# T.players[3].color=grey
 
 	pygame.init()
 	clock = pygame.time.Clock()
-	ventana = pygame.display.set_mode((f_w, f_h))
-	Win=CurrentWindow(ventana,T)
-	Win.game.nb_joueurs=3
+	fenetre = pygame.display.set_mode((f_w, f_h))
+	Win=CurrentWindow(fenetre,T)
+	Win.game.nujugadores=3
 	Win.game.joueurs=['nico','nono','jojo']
 	#menu_but(Win)							#affiche ini ? useless ?
 	Win.fonctions.append(Win.start_game)		#fonctions ini 

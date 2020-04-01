@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 import random
 import copy
-
+import time
+import pygame
 class Continent():
 	def __init__(self,pays,bonus,name,Map):
 		self.bonus=bonus
@@ -21,20 +22,20 @@ class Pays():
 		self.name=name
 		self.continent=continent
 		self.id_player=0
-		self.nb_troupes=0
+		self.nb_tropas=0
 		self.voisins=[]
 
-	def voisins(self,pays):
+	def voisins(self,pays):#define funcion de  vecinos 
 		for p in pays:
 			self.voisins.append(p)
 
 	def print_carac(self):
-		print(self.id,self.name,self.continent,self.id_player,self.nb_troupes,self.voisins)
+		print(self.id,self.name,self.continent,self.id_player,self.nb_tropas,self.voisins)
 
 class Player():
 	def __init__(self,id,Map,turns):
 		self.id=id
-		self.nb_troupes=0
+		self.nb_tropas=0
 		self.name=""
 		self.pays=[]
 		self._bonus=0
@@ -48,6 +49,7 @@ class Player():
 		self.win_land=False
 
 	def use_best_cards(self):
+		
 		#TODO empecher l'utilisation si on est pas dans le tour de déploiment
 		if self.turns.list_phase[self.turns.phase]=='placement':
 			nb_s=[x for x in self.cards if x.type==x.types[0]]
@@ -63,21 +65,21 @@ class Player():
 				self.use_cards([nb_s[0],nb_s[1],nb_s[2]])
 			else:#sinon pas de combi possible
 				#TODO raise
-				print('Pas de combianaison disponibles')
+				print('No hay combinación disponible.')
 		else:#TODO raise
-			print('On peut positionner que pendant la phase de placement')
+			print('Podemos posicionar eso durante la fase de desplazamiento')
 
 	#take only 3 cards in input
 	def use_cards(self,cards):
 		#triplé
 		if cards[0].type==cards[1].type and cards[1].type==cards[2].type and cards[0].type==cards[2].type:
-			self.nb_troupes+=cards[0].bonus
+			self.nb_tropas+=cards[0].bonus
 			self.cards.remove(cards[0])
 			self.cards.remove(cards[1])
 			self.cards.remove(cards[2])
 		#deparaillé
 		elif cards[0].type!=cards[1].type and cards[1].type!=cards[2].type and cards[0].type!=cards[2].type:
-			self.nb_troupes+=cards[0].max_bonus
+			self.nb_tropas+=cards[0].max_bonus
 			self.cards.remove(cards[0])
 			self.cards.remove(cards[1])
 			self.cards.remove(cards[2])
@@ -86,7 +88,7 @@ class Player():
 		self.cards.pop(card_index)
 
 	def print_carac(self):
-		print(self.id,self.name,self.nb_troupes,self.sbyturn,self.pays)
+		print(self.id,self.name,self.nb_tropas,self.sbyturn,self.pays)
 
 	@property
 	def sbyturn(self):				#mise a jour des qu'on l'apelle
@@ -111,7 +113,7 @@ class Player():
 			return True
 		else:
 			#TODO
-			#print(self.name+" is dead")
+			print(self.name+" is dead")
 			#self.turns.ordre.remove(self.id_player)
 			return False
 
@@ -136,9 +138,9 @@ class Objective():
 		if self.type=='capture continents':
 			self.continents=[]
 			self.other_cont=False
-			self.nbtroupes=1
+			self.nbtropas=1
 			r_choice=random.choice(self.goal.randrange[0])
-			self.goal.randrange[0].remove(r_choice) #on enleve la combinaison choisi pour eviter les doublons de missions
+			self.goal.randrange[0].remove(r_choice) # eliminamos la combinación elegida para evitar misiones duplicadas
 			if r_choice==0:
 				self.continents.append(self.goal.map.continents[4])
 				self.continents.append(self.goal.map.continents[5])
@@ -163,18 +165,18 @@ class Objective():
 			r_choice=random.randint(0,1)
 			if r_choice==0:
 				self.nbpays=18
-				self.nbtroupes=2
+				self.nbtropas=2
 			if r_choice==1:
 				self.nbpays=24
-				self.nbtroupes=1
+				self.nbtropas=1
 		if self.type=='destroy':
 			randrange_excl=copy.copy(self.goal.randrange[2])
 			try:
 				randrange_excl.remove(self.player.id)#exclude himself
 			except ValueError:
-				pass #player deja remove de la list
+				pass #jugador eliminado  de la lista
 			if len(randrange_excl)==0:
-				print('erreur de merde')
+				print('error ')
 			try:
 				randid=random.choice(randrange_excl)
 				print(self.goal.randrange[2],randrange_excl,randid)
@@ -195,8 +197,8 @@ class Objective():
 			return tmp_str
 		elif self.type=='capture pays':
 			tmp_str = 'Capturer '+str(self.nbpays)+' pays' 
-			if self.nbtroupes>1:
-				tmp_str+=' avec '+str(self.nbtroupes)+' soldats'
+			if self.nbtropas>1:
+				tmp_str+=' avec '+str(self.nbtropas)+' soldats'
 			return tmp_str
 		elif self.type=='destroy':
 			if self.target.name=='':
@@ -206,16 +208,16 @@ class Objective():
 
 	def get_state(self):
 		if self.type=='capture pays':
-			return self.capture_pays(self.nbpays,self.nbtroupes)
+			return self.capture_pays(self.nbpays,self.nbtropas)
 		if self.type=='capture continents':
-			return self.capture_continents(self.continents,self.nbtroupes)
+			return self.capture_continents(self.continents,self.nbtropas)
 		if self.type=='destroy':
 			return self.destroy_player(self.target)		
 
-	def capture_pays(self,nb_pays,nb_troupes):
+	def capture_pays(self,nb_pays,nb_tropas):
 		nb_occupe=0
 		for p in self.goal.map.pays:
-			if p.nb_troupes>nb_troupes-1 and p.id_player==self.player.id:
+			if p.nb_tropas>nb_tropas-1 and p.id_player==self.player.id:
 				nb_occupe+=1
 		if nb_occupe>nb_pays-1:
 			self.goal.turns.game_finish=True
@@ -223,12 +225,12 @@ class Objective():
 		else:
 			return False
 
-	def capture_continents(self,continents,nb_troupes):
+	def capture_continents(self,continents,nb_tropas):
 		nb_occupe=0
 		for c in continents:
 			cont_occupe=True
 			for p in c.pays:
-				if p.nb_troupes<nb_troupes or p.id_player!=self.player.id:
+				if p.nb_tropas<nb_tropas or p.id_player!=self.player.id:
 					cont_occupe=False
 			if cont_occupe==True:
 				nb_occupe+=1
@@ -239,7 +241,7 @@ class Objective():
 			for c in other_conts:
 				cont_occupe=True
 				for p in c.pays:
-					if p.nb_troupes<nb_troupes or p.id_player!=self.player.id:
+					if p.nb_tropas<nb_tropas or p.id_player!=self.player.id:
 						cont_occupe=False
 				if cont_occupe==True:
 					additionnal_cont+=1
@@ -278,6 +280,7 @@ class Turns():
 	def __init__(self,nb_players,M):
 		self.game_finish=False
 		self.num=0
+		
 		self.nb_players=nb_players
 		self.ordre=list(range(1,nb_players+1))
 		random.shuffle(self.ordre)
@@ -297,8 +300,8 @@ class Turns():
 		self._player_turn=self.ordre[self.id_ordre]
 
 	def next(self):
-		if self.players[self.player_turn-1].nb_troupes>0:
-			raise ValueError('Need to deploy',self.players[self.player_turn-1].nb_troupes)
+		if self.players[self.player_turn-1].nb_tropas>0:
+			raise ValueError('Need to deploy',self.players[self.player_turn-1].nb_tropas)
 		if self.num==0: #phase de placement initiale
 			self.id_ordre=(self.id_ordre+1)%len(self.ordre)
 			if self.id_ordre==0:
@@ -314,65 +317,68 @@ class Turns():
 				if self.id_ordre==0:
 					self.num+=1
 					self.phase=0
-					#mise a jour du nombre de troupes dispos : renforts de débuts de tour
-					self.players[self.player_turn-1].nb_troupes+=self.players[self.player_turn-1].sbyturn
+					#mise a jour du nombre de tropas dispos : renforts de débuts de tour
+					self.players[self.player_turn-1].nb_tropas+=self.players[self.player_turn-1].sbyturn
 		else:
 			self.phase=(self.phase+1)%len(self.list_phase)
 			if self.phase == 0 :
 				self.id_ordre=(self.id_ordre+1)%len(self.ordre)
 				#mise a jour du booleen de pays capture
 				self.players[self.player_turn-1].win_land=False
-				#mise a jour du nombre de troupes dispos : renforts de débuts de tour
-				self.players[self.player_turn-1].nb_troupes+=self.players[self.player_turn-1].sbyturn
+				#mise a jour du nombre de tropas dispos : renforts de débuts de tour
+				self.players[self.player_turn-1].nb_tropas+=self.players[self.player_turn-1].sbyturn
 				if self.id_ordre==0:
 					self.num+=1
 		print('tour numero :', self.num,'ordre',self.ordre,'joueur tour', self.ordre[self.id_ordre])
 		print(self.list_phase[self.phase])
 
 	def next_player(self):
-		# if self.players[self.player_turn-1].nb_troupes>0:
-		# 	raise ValueError('Need to deploy',self.players[self.player_turn-1].nb_troupes)
-		if self.num==0: #phase de placement initiale
-			self.id_ordre=(self.id_ordre+1)%len(self.ordre)
-			if self.id_ordre==0:
-				self.num+=1
-				self.phase=(self.phase+1)%len(self.list_phase)
-		elif self.num==1:#on saute la phase de placement
-			self.phase=1
-			self.id_ordre=(self.id_ordre+1)%len(self.ordre)
+		# if self.players[self.player_turn-1].nb_tropas>0:
+		# 	raise ValueError('Need to deploy',self.players[self.player_turn-1].nb_tropas)
+	
+			if self.num==0: #phase de placement initiale
+				self.id_ordre=(self.id_ordre+1)%len(self.ordre)
+				if self.id_ordre==0:
+					self.num+=1
+					self.phase=(self.phase+1)%len(self.list_phase)
+			elif self.num==1:#on saute la phase de placement
+				self.phase=1
+				self.id_ordre=(self.id_ordre+1)%len(self.ordre)
 			#mise a jour du booleen de pays capture
-			self.players[self.player_turn-1].win_land=False
-			if self.id_ordre==0:
-				self.num+=1
-				self.phase=0
-				#mise a jour du nombre de troupes dispos : renforts de débuts de tour
-				self.players[self.player_turn-1].nb_troupes+=self.players[self.player_turn-1].sbyturn
+				self.players[self.player_turn-1].win_land=False
+				if self.id_ordre==0:
+					self.num+=1
+					self.phase=0
+				#mise a jour du nombre de tropas dispos : renforts de débuts de tour
+					self.players[self.player_turn-1].nb_tropas+=self.players[self.player_turn-1].sbyturn
 
-		else:
+			else:
 			#on passe au tours du joueur suivant
-			self.id_ordre=(self.id_ordre+1)%len(self.ordre)
-			self.phase=0
+				self.id_ordre=(self.id_ordre+1)%len(self.ordre)
+				self.phase=0
 			#mise a jour du booleen de pays capture
-			self.players[self.player_turn-1].win_land=False
-			#mise a jour du nombre de troupes dispos : renforts de débuts de tour
-			self.players[self.player_turn-1].nb_troupes+=self.players[self.player_turn-1].sbyturn
-			if self.id_ordre==0:
-				self.num+=1
+				self.players[self.player_turn-1].win_land=False
+			#mise a jour du nombre de tropas dispos : renforts de débuts de tour
+				self.players[self.player_turn-1].nb_tropas+=self.players[self.player_turn-1].sbyturn
+				if self.id_ordre==0:
+					self.num+=1
 
 	def start_deploy(self):
-		if self.nb_players==3:
-			nb_troupes=35
+		if self.nb_players==2:
+			nb_tropas=60
+		elif self.nb_players==3:
+			nb_tropas=35
 		elif self.nb_players==4:
-			nb_troupes=30
+			nb_tropas=30
 		elif self.nb_players==5:
-			nb_troupes=25
+			nb_tropas=25
 		elif self.nb_players==6:
-			nb_troupes=20
+			nb_tropas=20
 		else:
 			#throw execption
 			print('Nombre de players invalide')
 		for p in self.players:
-			p.nb_troupes=nb_troupes
+			p.nb_tropas=nb_tropas
 
 	def distrib_pays(self,pays):
 		lst_id_pays=[]
@@ -389,8 +395,8 @@ class Turns():
 		for p in self.players:
 			for pays in p.pays:
 				self.map.pays[pays-1].id_player=p.id
-				self.map.pays[pays-1].nb_troupes=1 #minimum de un soldat sur tout territoire
-				p.nb_troupes-=1
+				self.map.pays[pays-1].nb_tropas=1 #minimum de un soldat sur tout territoire
+				p.nb_tropas-=1
 		return lst_id_pays     #debug
 
 	def throw_dices(self,atck,defense):
@@ -411,6 +417,8 @@ class Turns():
 		return pertes
 
 	def attaque(self,pays_a,pays_d,nb_attaquants):
+		pygame.time.Clock
+		pygame.init()
 		res_l=[]
 		while(True):
 			if nb_attaquants>2:
@@ -420,28 +428,28 @@ class Turns():
 			elif nb_attaquants>0:
 				dice_atck=1
 			else:
-				#throw exception pas assez de troupes pour attaquer
+				#throw exception pas assez de tropas pour attaquer
 				raise ValueError('not enough troops :',nb_attaquants)
-			if pays_d.nb_troupes>1:
+			if pays_d.nb_tropas>1:
 				dice_def=2
-			elif pays_d.nb_troupes>0:
+			elif pays_d.nb_tropas>0:
 				dice_def=1
 			res=self.throw_dices(dice_atck,dice_def)
 			print(res)
 			res_l.append(res)
-			pays_a.nb_troupes-=res[0]
+			pays_a.nb_tropas-=res[0]
 			nb_attaquants-=res[0]
-			pays_d.nb_troupes-=res[1]
+			pays_d.nb_tropas-=res[1]
 
 			if nb_attaquants==0: #l'attaque a echoué
 				return False,res_l
-			elif pays_d.nb_troupes==0: #le pays est capturé
+			elif pays_d.nb_tropas==0: #le pays est capturé
 				#mise a jour de la liste des pays de chaque joueurs
 				self.players[pays_a.id_player-1].pays.append(pays_d.id)
 				self.players[pays_d.id_player-1].pays.remove(pays_d.id)
 				#on change le player id 
 				pays_d.id_player=pays_a.id_player
-				#deplacement automatique du nombre de troupes attaquante au dernier lancer de dés (1,2,3)
+				#deplacement automatique du nombre de tropas attaquante au dernier lancer de dés (1,2,3)
 				self.deplacer(pays_a,pays_d,dice_atck)
 				#on donne une carte au joueur attaquant si c'est son premier territoire capturé ce tour
 				if self.players[pays_a.id_player-1].win_land==False:
@@ -454,20 +462,20 @@ class Turns():
 					#print(self.players[pays_a.id_player-1].cards)
 				return True,res_l  #success
 
-	def deplacer(self,pays_ori,pays_dest,nb_troupes):
-		pays_ori.nb_troupes-=nb_troupes
-		pays_dest.nb_troupes+=nb_troupes
+	def deplacer(self,pays_ori,pays_dest,nb_tropas):
+		pays_ori.nb_tropas-=nb_tropas
+		pays_dest.nb_tropas+=nb_tropas
 
-	def placer(self,pays,nb_troupes):
+	def placer(self,pays,nb_tropas):
 		#le player qui place voit son compteur décroitre
 		player=next((p for p in self.players if p.id == pays.id_player), None)
-		if(player.nb_troupes-nb_troupes<=0):
-			pays.nb_troupes+=player.nb_troupes
-			player.nb_troupes-=player.nb_troupes
+		if(player.nb_tropas-nb_tropas<=0):
+			pays.nb_tropas+=player.nb_tropas
+			player.nb_tropas-=player.nb_tropas
 			self.next()
 		else:
-			player.nb_troupes-=nb_troupes
-			pays.nb_troupes+=nb_troupes
+			player.nb_tropas-=nb_tropas
+			pays.nb_tropas+=nb_tropas
 
 	def print_players(self):
 		for p in self.players:
