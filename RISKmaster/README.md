@@ -1,56 +1,37 @@
 # Risk
-Risk game in python
+Juego de estrategia RISK desarrollado en Python
 
-Launch GUI.py
-
-Shortcut:
+Comandos:
 <ul>
-<li>ESC : quit</li>
-<li>n : next phase</li>
-<li>p : next player turn</li>
-<li>h : show/hide help menu</li>
-<li>c : show/hide continents</li>
-<li>u : use cards</li>
-<li>d : show/hide quests & cards</li>
-<li>rigth click : unselect</li>
-<li>mouse wheel : increase/decrease number of units select</li>
+<li>ESC : salir</li>
+<li>n : siguiente fase</li>
+<li>p : siguiente turno de jugador</li>
+<li>h : mostrar/ocultar menú de ayuda</li>
+<li>c : mostrar/ocultar continentes</li>
+<li>u : usar cartas</li>
+<li>d : mostrar/ocultar misiones y cartas</li>
+<li>clic derecho: anular la selección </li>
+<li>rueda del mouse: aumentar/disminuir el número de unidades seleccionadas </li>
 </ul>
 
-Known bug:
+Error conocido:
 <ul>
-<li>text too long</li>
-<li>no path 2->6afrique du sud</li>
+<li>Texto demasiado largo</li>
+<li>No hay ruta hacia Sudáfrica</li>
 </ul>
 
 TODO:
 <ul>
-<li>Add some graphic for troops selection</li>
-<li>Improve dice display</li>
-<li>Fonctionality : save </li>
-<li>Don't allow multiple players to take the same color</li>
-<li>color are horrible</li>
-<li>Permettre le combat tours par tours avec interruption du joueurs ou combat instant</li>
+<li>Agregar un gráfico para la selección de tropas</li>
+<li>Mejorar la visualización de dados</li>
+<li>Dar la funcionalidad para guardar</li>
+<li>No permitir que varios jugadores tomen el mismo color</li>
+<li>Cambiar colores</li>
+<li>Permitir el combate por turnos con interrupción del jugador o combate instantáneo</li>
 <li>debug mod</li>
-<li>check neighbor</li>
-<li>encoding for french</li>
-<li>make continent appear when you higlight continent or objectives</li>
-<li><del>Improve speed</del></li>
-<li><del>show dice results</del></li>
-<li><del>hide players secret informations</del></li>
-<li><del>limit number of bonus card to five</del></li>
-<li><del>negative number of soldier</del></li>
-<li><del>allow to move a number of soldier after a win</del></li>
-<li><del>allow to chose number of attacker</del></li>
-<li><del>allow to chose number of soldier moved</del></li>
-<li><del>don't pass when you free move 0 units</del></li>
-<li><del>make bonus card usable</del></li>
-<li><del>correct continents goals</del></li>
-<li><del>players have to deploy troops</del></li>
-<del><li>give bonus card if player win a territory</li></del>
-<li><del>finish game when a player achieve is goal</del></li>
-<li><del>make a victory screen</del></li>
-<li><del>help menu</del></li>
-<del><li>give goals to player</li></del>
+<li>Comprobar vecinos fronterizos</li>
+<li>Hacer que el continente aparezca cuando se resalta un continente u objetivo</li>
+
 </ul>
 
 Questions:
